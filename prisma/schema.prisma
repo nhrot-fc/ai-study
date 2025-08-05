@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ====================================================================
+// MODELOS DE LA BASE DE DATOS
+// ====================================================================
+
+model User {
+  id            String       @id @default(cuid())
+  nickname      String       @unique
+  password_hash String
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+
+  ownedContent  Content[]    @relation("OwnedContent")
+  enrollments   Enrollment[]
+  progress      UserProgress[]
+}
+
+model Content {
+  id           String    @id @default(cuid())
+  owner_id     String
+  name         String
+  description  String?
+  content_type ContentType
+  is_private   Boolean   @default(true)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  owner          User     @relation("OwnedContent", fields: [owner_id], references: [id])
+  forked_from_id String?
+  forked_from    Content? @relation("ForkedContent", fields: [forked_from_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  forks          Content[]@relation("ForkedContent")
+
+  // Relaciones de perfiles 1-a-1
+  courseProfile   CourseProfile?
+  resourceProfile ResourceProfile?
+
+  // Relaciones de jerarquía (padres e hijos)
+  parentInHierarchy ContentHierarchy[] @relation("ParentContent")
+  childInHierarchy  ContentHierarchy[] @relation("ChildContent")
+
+  // Relaciones de adjuntos (contenedores y recursos)
+  attachmentsAsContainer ContentAttachment[] @relation("ContainerContent")
+  attachmentsAsResource  ContentAttachment[] @relation("ResourceContent")
+
+  // Relaciones de usuarios
+  enrollments Enrollment[]
+  progress    UserProgress[]
+}
+
+model CourseProfile {
+  content_id    String  @id
+  cover_img_url String?
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+}
+
+model ResourceProfile {
+  content_id String  @id
+  source_url String?
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+}
+
+model ContentHierarchy {
+  id        String   @id @default(cuid())
+  parent_id String
+  child_id  String
+  position  Int
+
+  parent Content @relation("ParentContent", fields: [parent_id], references: [id], onDelete: Cascade)
+  child  Content @relation("ChildContent", fields: [child_id], references: [id], onDelete: Cascade)
+
+  @@unique([parent_id, child_id])
+}
+
+model ContentAttachment {
+  id           String   @id @default(cuid())
+  container_id String
+  resource_id  String
+  created_at   DateTime @default(now())
+
+  container Content @relation("ContainerContent", fields: [container_id], references: [id], onDelete: Cascade)
+  resource  Content @relation("ResourceContent", fields: [resource_id], references: [id], onDelete: Cascade)
+
+  @@unique([container_id, resource_id])
+}
+
+model Enrollment {
+  user_id     String
+  content_id  String
+  is_starred  Boolean  @default(false)
+  enrolled_at DateTime @default(now())
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, content_id])
+}
+
+model UserProgress {
+  user_id             String
+  content_id          String
+  progress_percentage Float    @default(0.0)
+  status              Status   @default(NOT_STARTED)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, content_id])
+}
+
+enum ContentType {
+  COURSE
+  BOOK
+  PAPER
+  YT_VIDEO
+  CHAPTER
+  TOPIC
+}
+
+enum Status {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
