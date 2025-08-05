@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ROUTES, APP_TITLE } from "@/lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +27,9 @@ import {
   HelpCircleIcon,
   LogOutIcon,
   BellIcon,
+  BookIcon,
+  HomeIcon,
+  FileTextIcon,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -32,9 +37,11 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 bg-background border-b shadow-sm flex items-center justify-between px-4 py-2">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold">My App</h1>
+        <h1 className="text-xl font-bold text-gradient text-gradient-primary">{APP_TITLE}</h1>
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
+        
         <Button
           variant="ghost"
           size="icon"
@@ -88,7 +95,7 @@ const Header: React.FC = () => {
               <MenuIcon className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+                    <SheetContent side="right" className="w-[250px] sm:w-[300px]">
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
               <SheetDescription>
@@ -97,20 +104,29 @@ const Header: React.FC = () => {
             </SheetHeader>
             <div className="py-4">
               <div className="space-y-1">
-                <Button variant="ghost" className="w-full justify-start">
-                  Home
+                <Button asChild variant="ghost" className="w-full justify-start">
+                  <a href={ROUTES.HOME}>
+                    <HomeIcon className="mr-2 h-4 w-4" />
+                    Home
+                  </a>
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
-                  About
+                <Button asChild variant="ghost" className="w-full justify-start">
+                  <a href={ROUTES.COURSES}>
+                    <BookIcon className="mr-2 h-4 w-4" />
+                    Courses
+                  </a>
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
-                  Contact
+                <Button asChild variant="ghost" className="w-full justify-start">
+                  <a href={ROUTES.RESOURCES}>
+                    <FileTextIcon className="mr-2 h-4 w-4" />
+                    Resources
+                  </a>
                 </Button>
-                <Button variant="ghost" className="w-full justify-start">
-                  Documentation
-                </Button>
-                <Button variant="ghost" className="w-full justify-start">
-                  Settings
+                <Button asChild variant="ghost" className="w-full justify-start">
+                  <a href={ROUTES.SETTINGS}>
+                    <SettingsIcon className="mr-2 h-4 w-4" />
+                    Settings
+                  </a>
                 </Button>
               </div>
             </div>

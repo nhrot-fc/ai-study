@@ -2,6 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -12,8 +13,8 @@ import {
 } from "@/components/ui/collapsible";
 import {
   HomeIcon,
-  InfoIcon,
-  MailIcon,
+  BookIcon,
+  FileTextIcon,
   Settings2Icon,
   BookOpenIcon,
   BarChart2Icon,
@@ -106,14 +107,17 @@ const Sidebar: React.FC = () => {
               icon={<HomeIcon className="h-4 w-4" />}
               label="Home"
               isActive={true}
+              href={ROUTES.HOME}
             />
             <SidebarItem
-              icon={<InfoIcon className="h-4 w-4" />}
-              label="About"
+              icon={<BookIcon className="h-4 w-4" />}
+              label="Courses"
+              href={ROUTES.COURSES}
             />
             <SidebarItem
-              icon={<MailIcon className="h-4 w-4" />}
-              label="Contact"
+              icon={<FileTextIcon className="h-4 w-4" />}
+              label="Resources"
+              href={ROUTES.RESOURCES}
             />
           </SidebarSection>
 
@@ -145,6 +149,7 @@ const Sidebar: React.FC = () => {
             <SidebarItem
               icon={<Settings2Icon className="h-4 w-4" />}
               label="Settings"
+              href={ROUTES.SETTINGS}
             />
           </SidebarSection>
         </div>
