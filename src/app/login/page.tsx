@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { GithubIcon } from "lucide-react";
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 
 const LoginPage = () => {
   return (
@@ -82,10 +82,11 @@ const LoginPage = () => {
 
             <div className="flex gap-2">
               <Button variant="outline" className="w-full">
-                <GithubIcon className="mr-2 h-4 w-4" />
+                <SiGithub className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
               <Button variant="outline" className="w-full">
+                <SiGoogle className="mr-2 h-4 w-4" />
                 Google
               </Button>
             </div>

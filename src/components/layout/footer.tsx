@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { GithubIcon, TwitterIcon, InstagramIcon } from "lucide-react";
+import { SiGithub, SiX, SiInstagram } from "@icons-pack/react-simple-icons";
 
 const Footer: React.FC = () => {
   return (
@@ -13,13 +13,13 @@ const Footer: React.FC = () => {
         </p>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon">
-            <GithubIcon className="h-4 w-4" />
+            <SiGithub className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon">
-            <TwitterIcon className="h-4 w-4" />
+            <SiX className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon">
-            <InstagramIcon className="h-4 w-4" />
+            <SiInstagram className="h-4 w-4" />
           </Button>
         </div>
       </div>
