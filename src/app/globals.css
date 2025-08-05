@@ -3,6 +3,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-intense {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
