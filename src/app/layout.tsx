@@ -5,7 +5,8 @@ import "./globals.css";
 // Providers
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { MainLayout } from "@/components/layout/main-layout";
+import PageLayout from "@/components/layout/page-layout";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,7 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TooltipProvider>
-          <MainLayout>{children}</MainLayout>
+          <PageLayout>{children}</PageLayout>
           <Toaster />
         </TooltipProvider>
       </body>
