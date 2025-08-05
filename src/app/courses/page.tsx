@@ -33,6 +33,7 @@ const CoursesPage = () => {
       tags: ["AI", "Beginner", "Python"],
       image:
         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      fallbackImage: "/vercel.svg", // Fallback to a local image if the external one fails
     },
     {
       id: "2",
@@ -43,6 +44,7 @@ const CoursesPage = () => {
       tags: ["Web", "Frontend", "Beginner"],
       image:
         "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      fallbackImage: "/vercel.svg",
     },
     {
       id: "3",
@@ -53,6 +55,7 @@ const CoursesPage = () => {
       tags: ["React", "Advanced", "Frontend"],
       image:
         "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      fallbackImage: "/vercel.svg",
     },
   ];
 

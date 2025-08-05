@@ -7,19 +7,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
   HomeIcon,
   BookIcon,
   FileTextIcon,
   Settings2Icon,
   BookOpenIcon,
-  BarChart2Icon,
-  ChevronDownIcon,
-  ChevronRightIcon,
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -34,7 +26,12 @@ interface SidebarSectionProps {
   children: React.ReactNode;
 }
 
-const SidebarItem = ({ icon, label, isActive, href = "#" }: SidebarItemProps) => {
+const SidebarItem = ({
+  icon,
+  label,
+  isActive,
+  href = "#",
+}: SidebarItemProps) => {
   return (
     <Button
       asChild
@@ -60,43 +57,6 @@ const SidebarSection = ({ title, children }: SidebarSectionProps) => {
   );
 };
 
-const SidebarCollapsible = ({
-  icon,
-  label,
-  children,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  children: React.ReactNode;
-}) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className="w-full"
-    >
-      <CollapsibleTrigger asChild>
-        <Button variant="ghost" className="w-full justify-between">
-          <div className="flex items-center">
-            {icon}
-            <span className="ml-2">{label}</span>
-          </div>
-          {isOpen ? (
-            <ChevronDownIcon className="h-4 w-4" />
-          ) : (
-            <ChevronRightIcon className="h-4 w-4" />
-          )}
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="pl-6 space-y-1">
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
-  );
-};
-
 const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 h-full border-r bg-background">
@@ -119,24 +79,6 @@ const Sidebar: React.FC = () => {
               label="Resources"
               href={ROUTES.RESOURCES}
             />
-          </SidebarSection>
-
-          <Separator className="my-2" />
-
-          <SidebarSection title="Analytics">
-            <SidebarCollapsible
-              icon={<BarChart2Icon className="h-4 w-4" />}
-              label="Reports"
-            >
-              <SidebarItem
-                icon={<ChevronRightIcon className="h-4 w-4" />}
-                label="Overview"
-              />
-              <SidebarItem
-                icon={<ChevronRightIcon className="h-4 w-4" />}
-                label="Statistics"
-              />
-            </SidebarCollapsible>
           </SidebarSection>
 
           <Separator className="my-2" />
