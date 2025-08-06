@@ -1,5 +1,5 @@
 // src/app/api/types.ts
-import { Content, ContentType, Status } from '@/generated/prisma/client';
+import { Content, ContentType, Status } from '@prisma/client';
 
 // User types
 export interface UserCreateInput {

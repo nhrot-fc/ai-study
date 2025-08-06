@@ -17,11 +17,14 @@ import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
+    nickname: "",
     email: "",
+    full_name: "",
     password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,34 +39,38 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
 
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Here you would implement the login API call
-      // const response = await fetch('/api/auth/login', {
+      // Here you would implement the registration API call
+      // const response = await fetch('/api/register', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({
+      //     nickname: formData.nickname,
       //     email: formData.email,
+      //     full_name: formData.full_name,
       //     password: formData.password
       //   })
       // });
-
+      
       // if (!response.ok) {
       //   const data = await response.json();
-      //   throw new Error(data.error || 'Login failed');
+      //   throw new Error(data.message || 'Registration failed');
       // }
 
-      // const data = await response.json();
-      // Store token in localStorage or use a proper auth context
-      // localStorage.setItem('token', data.token);
-
-      // Mock successful login - replace with actual API call
+      // Mock success - replace with actual API call
       setTimeout(() => {
-        // After successful login, redirect to home
-        router.push(ROUTES.HOME);
+        // After successful registration, redirect to login
+        router.push(ROUTES.LOGIN);
       }, 1500);
-    } catch (err: unknown) {
-      const error = err as Error;
-      setError(error.message || "Login failed. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
       setLoading(false);
     }
   };
@@ -76,74 +83,97 @@ const LoginPage = () => {
             {APP_TITLE}
           </h1>
           <p className="mt-3 text-muted-foreground">
-            Sign in to continue to your learning journey
+            Create a new account to start your learning journey
           </p>
         </div>
 
         <Card className="backdrop-blur-sm bg-card/80 glow-primary">
           <CardHeader>
-            <CardTitle className="text-2xl">{PAGE_TITLES.LOGIN}</CardTitle>
+            <CardTitle className="text-2xl">Register</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Fill in your details to create a new account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {error && (
-              <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-                {error}
-              </div>
-            )}
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+                  {error}
+                </div>
+              )}
+              
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={formData.email}
+                <Label htmlFor="full_name">Full Name</Label>
+                <Input 
+                  id="full_name" 
+                  value={formData.full_name}
                   onChange={handleChange}
-                  required
+                  placeholder="John Doe" 
                 />
               </div>
+
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-primary hover:text-primary/80"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
+                <Label htmlFor="nickname">Nickname</Label>
+                <Input 
+                  id="nickname" 
+                  value={formData.nickname}
+                  onChange={handleChange}
+                  placeholder="johndoe" 
+                  required 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com" 
+                  required 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
                   value={formData.password}
                   onChange={handleChange}
-                  required
+                  required 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input 
+                  id="confirmPassword" 
+                  type="password" 
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required 
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:glow-primary pulse-animation"
+                className="w-full bg-gradient-primary hover:glow-primary"
                 disabled={loading}
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? "Creating account..." : "Create Account"}
               </Button>
-
-              <div className="flex items-center justify-center">
-                <div className="text-xs text-muted-foreground">
-                  Don{"'"}t have an account?{" "}
-                  <Link
-                    href="/register"
-                    className="text-primary hover:text-primary/80"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-              </div>
             </form>
+
+            <div className="flex items-center justify-center">
+              <div className="text-xs text-muted-foreground">
+                Already have an account?{" "}
+                <Link href={ROUTES.LOGIN} className="text-primary hover:text-primary/80">
+                  Sign in
+                </Link>
+              </div>
+            </div>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -168,7 +198,7 @@ const LoginPage = () => {
             </div>
           </CardContent>
           <CardFooter className="text-xs text-center text-muted-foreground">
-            By signing in, you agree to our Terms of Service and Privacy Policy.
+            By registering, you agree to our Terms of Service and Privacy Policy.
           </CardFooter>
         </Card>
       </div>
@@ -176,4 +206,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
