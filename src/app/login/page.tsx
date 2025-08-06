@@ -37,30 +37,27 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Here you would implement the login API call
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: formData.email,
-      //     password: formData.password
-      //   })
-      // });
+      // Make real API call
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-      // if (!response.ok) {
-      //   const data = await response.json();
-      //   throw new Error(data.error || 'Login failed');
-      // }
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Login failed");
+      }
 
-      // const data = await response.json();
-      // Store token in localStorage or use a proper auth context
-      // localStorage.setItem('token', data.token);
+      // Parse the callback URL from query params if it exists
+      const searchParams = new URLSearchParams(window.location.search);
+      const callbackUrl = searchParams.get("callbackUrl") || ROUTES.HOME;
 
-      // Mock successful login - replace with actual API call
-      setTimeout(() => {
-        // After successful login, redirect to home
-        router.push(ROUTES.HOME);
-      }, 1500);
+      // After successful login, redirect
+      router.push(decodeURIComponent(callbackUrl));
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message || "Login failed. Please try again.");
