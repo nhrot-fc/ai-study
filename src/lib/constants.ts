@@ -8,6 +8,7 @@ export const ROUTES = {
   RESOURCES: '/resources',
   SETTINGS: '/settings',
   LOGIN: '/login',
+  REGISTER: '/register',
   
   // Sub-routes
   COURSE_DETAIL: (id: string) => `/courses/${id}`,
@@ -32,6 +33,7 @@ export const PAGE_TITLES = {
   RESOURCES: 'Resources',
   SETTINGS: 'Settings',
   LOGIN: 'Sign In',
+  REGISTER: 'Sign Up',
 };
 
 /**

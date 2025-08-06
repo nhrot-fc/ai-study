@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authMiddleware, getUserId } from "@/lib/auth/auth-middleware";
-
+import { authMiddleware } from "@/lib/auth/auth-middleware";
+import { prisma } from "@/lib/prisma";
 // This route is protected by auth middleware
 export async function GET(req: NextRequest) {
   try {
@@ -12,15 +12,8 @@ export async function GET(req: NextRequest) {
       return authResponse;
     }
 
-    // Get user ID from headers (set by middleware)
-    const userId = getUserId(req);
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Authentication failed" },
-        { status: 401 }
-      );
-    }
+    // Get user ID from auth response
+    const userId = authResponse.id;
 
     // Get user data
     const user = await prisma.user.findUnique({
@@ -43,9 +36,8 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(user, { status: 200 });
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error("Error fetching user profile:", err);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
 
     return NextResponse.json(
       { error: "Failed to fetch user profile" },

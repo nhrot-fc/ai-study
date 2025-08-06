@@ -290,3 +290,17 @@
 .card-glow:hover {
   box-shadow: var(--glow-primary);
 }
+
+/* Custom gradient button styles */
+.gradient-button-hover:hover span {
+  background: transparent !important;
+}
+
+.gradient-button-active:active {
+  transform: scale(0.9);
+}
+
+/* Custom gradient backgrounds */
+.bg-gradient-purple-blue {
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+}

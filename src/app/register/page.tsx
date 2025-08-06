@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { APP_TITLE, PAGE_TITLES, ROUTES } from "@/lib/constants";
+import React, { useState, useEffect } from "react";
+import { APP_TITLE, ROUTES } from "@/lib/constants";
 import {
   Card,
   CardContent,
@@ -14,11 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const RegisterPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { register, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     nickname: "",
     email: "",
@@ -28,6 +31,14 @@ const RegisterPage = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // If already authenticated, redirect to home
+  useEffect(() => {
+    if (isAuthenticated) {
+      const callbackUrl = searchParams.get("callbackUrl") || ROUTES.HOME;
+      router.push(decodeURIComponent(callbackUrl));
+    }
+  }, [isAuthenticated, router, searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -47,30 +58,19 @@ const RegisterPage = () => {
     }
 
     try {
-      // Here you would implement the registration API call
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     nickname: formData.nickname,
-      //     email: formData.email,
-      //     full_name: formData.full_name,
-      //     password: formData.password
-      //   })
-      // });
-      
-      // if (!response.ok) {
-      //   const data = await response.json();
-      //   throw new Error(data.message || 'Registration failed');
-      // }
+      // Use the register function from auth context
+      await register({
+        nickname: formData.nickname,
+        email: formData.email,
+        full_name: formData.full_name || undefined,
+        password: formData.password,
+      });
 
-      // Mock success - replace with actual API call
-      setTimeout(() => {
-        // After successful registration, redirect to login
-        router.push(ROUTES.LOGIN);
-      }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Registration failed. Please try again.");
+      // After successful registration, redirect to login
+      router.push(ROUTES.LOGIN);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || "Registration failed. Please try again.");
       setLoading(false);
     }
   };
@@ -101,65 +101,67 @@ const RegisterPage = () => {
                   {error}
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <Label htmlFor="full_name">Full Name</Label>
-                <Input 
-                  id="full_name" 
+                <Input
+                  id="full_name"
                   value={formData.full_name}
                   onChange={handleChange}
-                  placeholder="John Doe" 
+                  placeholder="John Doe"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="nickname">Nickname</Label>
-                <Input 
-                  id="nickname" 
+                <Input
+                  id="nickname"
                   value={formData.nickname}
                   onChange={handleChange}
-                  placeholder="johndoe" 
-                  required 
+                  placeholder="johndoe"
+                  required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
+                <Input
+                  id="email"
+                  type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="name@example.com" 
-                  required 
+                  placeholder="name@example.com"
+                  required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input 
-                  id="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  type="password"
                   value={formData.password}
                   onChange={handleChange}
-                  required 
+                  required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input 
-                  id="confirmPassword" 
-                  type="password" 
+                <Input
+                  id="confirmPassword"
+                  type="password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  required 
+                  required
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:glow-primary"
+                variant="gradient"
+                size="gradient"
+                className="w-full"
                 disabled={loading}
               >
                 {loading ? "Creating account..." : "Create Account"}
@@ -169,7 +171,10 @@ const RegisterPage = () => {
             <div className="flex items-center justify-center">
               <div className="text-xs text-muted-foreground">
                 Already have an account?{" "}
-                <Link href={ROUTES.LOGIN} className="text-primary hover:text-primary/80">
+                <Link
+                  href={ROUTES.LOGIN}
+                  className="text-primary hover:text-primary/80"
+                >
                   Sign in
                 </Link>
               </div>
@@ -187,18 +192,19 @@ const RegisterPage = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" className="w-full">
+              <Button variant="gradient" size="gradient" className="flex-1">
                 <SiGithub className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="gradient" size="gradient" className="flex-1">
                 <SiGoogle className="mr-2 h-4 w-4" />
                 Google
               </Button>
             </div>
           </CardContent>
           <CardFooter className="text-xs text-center text-muted-foreground">
-            By registering, you agree to our Terms of Service and Privacy Policy.
+            By registering, you agree to our Terms of Service and Privacy
+            Policy.
           </CardFooter>
         </Card>
       </div>

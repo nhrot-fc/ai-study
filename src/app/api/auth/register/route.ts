@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: unknown) {
+  } catch (error) {
     const err = error as Error;
     console.error("Registration error:", err);
 

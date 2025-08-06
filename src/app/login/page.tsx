@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { APP_TITLE, PAGE_TITLES, ROUTES } from "@/lib/constants";
 import {
   Card,
@@ -14,17 +14,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const LoginPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // If we're already authenticated, redirect to home or the callback URL
+  useEffect(() => {
+    if (isAuthenticated) {
+      const callbackUrl = searchParams.get("callbackUrl") || ROUTES.HOME;
+      router.push(decodeURIComponent(callbackUrl));
+    }
+  }, [isAuthenticated, router, searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -37,27 +48,11 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Make real API call
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Login failed");
-      }
-
-      // Parse the callback URL from query params if it exists
-      const searchParams = new URLSearchParams(window.location.search);
-      const callbackUrl = searchParams.get("callbackUrl") || ROUTES.HOME;
-
-      // After successful login, redirect
-      router.push(decodeURIComponent(callbackUrl));
+      // Use the login function from auth context
+      await login(formData.email, formData.password);
+      
+      // No need to redirect here, the useEffect will handle it
+      // when isAuthenticated changes
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message || "Login failed. Please try again.");
@@ -123,7 +118,9 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:glow-primary pulse-animation"
+                variant="gradient"
+                size="gradient"
+                className="w-full pulse-animation"
                 disabled={loading}
               >
                 {loading ? "Signing in..." : "Sign in"}
@@ -154,11 +151,11 @@ const LoginPage = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" className="w-full">
+              <Button variant="gradient" size="gradient" className="flex-1">
                 <SiGithub className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="gradient" size="gradient" className="flex-1">
                 <SiGoogle className="mr-2 h-4 w-4" />
                 Google
               </Button>

@@ -51,9 +51,8 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error("Refresh token error:", err);
+  } catch (error) {
+    console.error("Refresh token error:", error);
 
     return NextResponse.json(
       { error: "Authentication failed" },

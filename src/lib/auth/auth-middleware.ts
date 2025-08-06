@@ -5,6 +5,8 @@ const authController = new AuthController();
 
 /**
  * Middleware to protect routes that require authentication
+ * For use in API route handlers
+ * @returns an error response or the authenticated user payload
  */
 export async function authMiddleware(req: NextRequest) {
   // Check for token in cookies
@@ -40,18 +42,12 @@ export async function authMiddleware(req: NextRequest) {
     return response;
   }
 
-  // Add user info to request headers for downstream handlers
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set("x-user-id", payload.id);
-  requestHeaders.set("x-user-email", payload.email);
-  requestHeaders.set("x-user-nickname", payload.nickname);
-
-  // Return response with modified headers
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  // Return the authenticated user payload
+  return {
+    id: payload.id,
+    email: payload.email,
+    nickname: payload.nickname,
+  };
 }
 
 /**

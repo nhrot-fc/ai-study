@@ -21,9 +21,8 @@ export async function POST(request: NextRequest) {
     response.cookies.delete("refreshToken");
 
     return response;
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error("Logout error:", err);
+  } catch (error) {
+    console.error("Logout error:", error);
 
     return NextResponse.json({ error: "Logout failed" }, { status: 500 });
   }
