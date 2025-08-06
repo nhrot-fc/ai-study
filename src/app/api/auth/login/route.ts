@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
+    console.log("[Login API] Setting cookies");
+    
     // Set access token in HTTP-only cookie
     response.cookies.set({
       name: "accessToken",
@@ -41,6 +43,7 @@ export async function POST(request: NextRequest) {
       sameSite: "lax", // More permissive than 'strict' for better UX
       path: "/",
       maxAge: 60 * 60 * 24, // 24 hours
+      // Don't set domain to ensure it works on localhost
     });
 
     // Set refresh token in HTTP-only cookie

@@ -21,9 +21,17 @@ export async function middleware(request: NextRequest) {
   // Get the token from cookies
   const token = request.cookies.get('accessToken')?.value;
   const isAuthenticated = !!token;
+  
+  // Log the auth state for debugging
+  console.log(`[Middleware] Path: ${path}, Public: ${isPublicPath}, Auth: ${isAuthenticated}`);
+  
+  // Log all cookies for debugging
+  const allCookies = Array.from(request.cookies.getAll()).map(c => `${c.name}=${c.value}`);
+  console.log('[Middleware] Cookies:', allCookies);
 
   // If the path requires authentication and the user isn't authenticated
   if (!isPublicPath && !isAuthenticated) {
+    console.log(`[Middleware] Redirecting to login from ${path}`);
     // Store the original URL to redirect after login
     const callbackUrl = encodeURIComponent(request.nextUrl.pathname);
     const url = new URL(ROUTES.LOGIN, request.nextUrl.origin);
@@ -43,7 +51,10 @@ export async function middleware(request: NextRequest) {
 // Define which routes this middleware should run on
 export const config = {
   matcher: [
-    // Apply to all routes except static files and api routes that handle their own auth
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    // Apply to all routes except:
+    // 1. Static files
+    // 2. API auth routes (which handle their own auth)
+    // 3. Other API routes that need special handling
+    '/((?!_next/static|_next/image|favicon.ico|public|api/auth).*)',
   ],
 };

@@ -57,51 +57,51 @@
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Base Colors */
   --background: #ffffff;
   --foreground: #1a1a2e;
-  
+
   /* Card Colors */
   --card: #ffffff;
   --card-foreground: #1a1a2e;
-  
+
   /* Popover Colors */
   --popover: #ffffff;
   --popover-foreground: #1a1a2e;
-  
+
   /* Primary Colors - Blue */
   --primary: #4361ee;
   --primary-foreground: #ffffff;
-  
+
   /* Secondary Colors - Purple */
   --secondary: #7209b7;
   --secondary-foreground: #ffffff;
-  
+
   /* Muted Colors */
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  
+
   /* Accent Colors - Lighter Purple */
   --accent: #b5179e;
   --accent-foreground: #ffffff;
-  
+
   /* Destructive Colors */
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  
+
   /* UI Element Colors */
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #4361ee;
-  
+
   /* Chart Colors */
   --chart-1: #4361ee;
   --chart-2: #3a0ca3;
   --chart-3: #7209b7;
   --chart-4: #f72585;
   --chart-5: #4cc9f0;
-  
+
   /* Sidebar Colors */
   --sidebar: #f8fafc;
   --sidebar-foreground: #1a1a2e;
@@ -111,12 +111,12 @@
   --sidebar-accent-foreground: #1a1a2e;
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #4361ee;
-  
+
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
   --gradient-secondary: linear-gradient(135deg, #3a0ca3 0%, #f72585 100%);
   --gradient-background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  
+
   /* Glow Effects */
   --glow-primary: 0 0 15px rgba(67, 97, 238, 0.5);
   --glow-secondary: 0 0 15px rgba(114, 9, 183, 0.5);
@@ -127,47 +127,47 @@
   /* Base Colors */
   --background: #0f172a;
   --foreground: #f8fafc;
-  
+
   /* Card Colors */
   --card: #1e293b;
   --card-foreground: #f8fafc;
-  
+
   /* Popover Colors */
   --popover: #1e293b;
   --popover-foreground: #f8fafc;
-  
+
   /* Primary Colors - Blue */
   --primary: #60a5fa;
   --primary-foreground: #0f172a;
-  
+
   /* Secondary Colors - Purple */
   --secondary: #c084fc;
   --secondary-foreground: #0f172a;
-  
+
   /* Muted Colors */
   --muted: #334155;
   --muted-foreground: #94a3b8;
-  
+
   /* Accent Colors */
   --accent: #8b5cf6;
   --accent-foreground: #ffffff;
-  
+
   /* Destructive Colors */
   --destructive: #f87171;
   --destructive-foreground: #0f172a;
-  
+
   /* UI Element Colors */
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.1);
   --ring: #60a5fa;
-  
+
   /* Chart Colors */
   --chart-1: #60a5fa;
   --chart-2: #818cf8;
   --chart-3: #c084fc;
   --chart-4: #f472b6;
   --chart-5: #34d399;
-  
+
   /* Sidebar Colors */
   --sidebar: #1e293b;
   --sidebar-foreground: #f8fafc;
@@ -177,12 +177,12 @@
   --sidebar-accent-foreground: #f8fafc;
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #60a5fa;
-  
+
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
   --gradient-secondary: linear-gradient(135deg, #818cf8 0%, #f472b6 100%);
   --gradient-background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  
+
   /* Glow Effects */
   --glow-primary: 0 0 20px rgba(96, 165, 250, 0.6);
   --glow-secondary: 0 0 20px rgba(192, 132, 252, 0.6);

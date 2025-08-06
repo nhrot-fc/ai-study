@@ -4,14 +4,18 @@ import { prisma } from "@/lib/prisma";
 // This route is protected by auth middleware
 export async function GET(req: NextRequest) {
   try {
+    console.log("[Profile API] Checking authentication");
+    
     // Apply auth middleware
     const authResponse = await authMiddleware(req);
 
     // If middleware returns a response, return it (unauthorized)
     if (authResponse instanceof NextResponse) {
+      console.log("[Profile API] User not authenticated");
       return authResponse;
     }
 
+    console.log("[Profile API] User authenticated, ID:", authResponse.id);
     // Get user ID from auth response
     const userId = authResponse.id;
 

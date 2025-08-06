@@ -50,19 +50,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is already authenticated on mount
     const checkAuth = async () => {
       try {
-        // Try to get user profile
-        const response = await fetch("/api/user/profile");
+        console.log("Checking authentication status...");
+        // Try to get user profile with a short timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch("/api/user/profile", {
+          signal: controller.signal,
+          // Setting credentials ensures cookies are sent with the request
+          credentials: "include",
+          // Don't follow redirects - we want to know if we're redirected
+          redirect: "manual"
+        });
+        clearTimeout(timeoutId);
+        
+        console.log("Auth check response:", response.status, response.statusText);
 
         if (response.ok) {
           const userData = await response.json();
+          console.log("User authenticated:", userData);
           setUser(userData);
+        } else if (response.status === 401 || response.type === "opaqueredirect") {
+          // 401 or redirect means unauthenticated
+          console.log("User not authenticated - received 401 or redirect");
+          setUser(null);
         } else {
+          console.log("User not authenticated, response not OK:", response.status);
           setUser(null);
         }
       } catch (error) {
-        console.error("Error checking auth:", error);
+        // AbortError means the request timed out
+        if (error.name === "AbortError") {
+          console.log("Auth check timed out - assuming not authenticated");
+        } else {
+          console.error("Error checking auth:", error);
+        }
         setUser(null);
       } finally {
+        console.log("Setting isLoading to false");
         setIsLoading(false);
       }
     };
