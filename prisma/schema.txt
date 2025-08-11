@@ -1,0 +1,97 @@
+====================================
+Definitions
+====================================
+
+User
+- id: UUID
+- nickname: String
+- email: String
+- password_hash: String
+- last_login_at: Timestamp
+- created_at: Timestamp
+- updated_at: Timestamp
+- deleted_at: Timestamp
+
+Course
+- id: UUID
+- created_by_id: UUID
+- forked_from_id: UUID
+- title: String
+- description: Optional<Text>
+- created_at: Timestamp
+- updated_at: Timestamp
+- deleted_at: Timestamp
+
+Resource
+- id: UUID
+- owner_id: UUID
+- type: ENUM<BOOK, VIDEO, PAPER, LINK, OTHER>
+- title: String
+- source_url: Optional<String>
+- created_at: Timestamp
+- updated_at: Timestamp
+- deleted_at: Timestamp
+
+====================================
+Hierarchy
+====================================
+
+CourseSection
+- id: UUID
+- course_id: UUID
+- parent_id: Optional<UUID>
+- title: String
+- description: Optional<Text>
+- order: Integer
+
+ResourceSection
+- id: UUID
+- resource_id: UUID
+- parent_id: UUID
+- title: String
+- description: Optional<Text>
+- order: Integer
+
+====================================
+Relations
+====================================
+
+Enrollment
+- user_id: UUID
+- course_id: UUID
+- is_starred: Boolean
+- enrolled_at: Timestamp
+
+CourseResource
+- course_id: UUID
+- resource_id: UUID
+
+SectionAttachment
+- id: UUID
+- course_section_id: UUID
+- resource_section_id: UUID
+- notes: Optional<Text>
+
+CourseProgress
+- user_id: UUID
+- course_id: UUID
+- progress: Float
+- updated_at: Timestamp
+
+ResourceProgress
+- user_id: UUID
+- resource_id: UUID
+- progress: Float
+- updated_at: Timestamp
+
+CourseSectionProgress
+- user_id: UUID
+- course_section_id: UUID
+- progress: Float
+- updated_at: Timestamp
+
+ResourceSectionProgress
+- user_id: UUID
+- resource_section_id: UUID
+- progress: Float
+- updated_at: Timestamp

@@ -1,4 +1,4 @@
-// Prisma schema for polymorphic attachments and progress across Course/Chapter and Chapter/Content
+// Prisma schema with simplified course and resource structure using two separate tree hierarchies
 
 generator client {
   provider = "prisma-client-js"
@@ -24,10 +24,13 @@ model User {
   last_login_at DateTime?
 
   // Relations
-  createdCourses Course[]     @relation("UserCreatedCourses")
-  resources      Resource[]
-  enrollments    Enrollment[]
-  progresses     Progress[]
+  createdCourses            Course[]                  @relation("UserCreatedCourses")
+  resources                 Resource[]
+  enrollments               Enrollment[]
+  courseProgresses          CourseProgress[]
+  resourceProgresses        ResourceProgress[]
+  courseSectionProgresses   CourseSectionProgress[]
+  resourceSectionProgresses ResourceSectionProgress[]
 }
 
 model Course {
@@ -41,14 +44,16 @@ model Course {
   deleted_at     DateTime?
 
   // Relations
-  created_by  User         @relation("UserCreatedCourses", fields: [created_by_id], references: [id], onDelete: Cascade)
-  forked_from Course?      @relation("CourseFork", fields: [forked_from_id], references: [id])
-  forks       Course[]     @relation("CourseFork")
-  chapters    Chapter[]
-  enrollments Enrollment[]
+  created_by       User             @relation("UserCreatedCourses", fields: [created_by_id], references: [id], onDelete: Cascade)
+  forked_from      Course?          @relation("CourseFork", fields: [forked_from_id], references: [id])
+  forks            Course[]         @relation("CourseFork")
+  sections         CourseSection[]
+  enrollments      Enrollment[]
+  courseResources  CourseResource[]
+  courseProgresses CourseProgress[]
 }
 
-model Chapter {
+model CourseSection {
   id          String    @id @default(uuid()) @db.Uuid
   course_id   String    @db.Uuid
   parent_id   String?   @db.Uuid
@@ -60,9 +65,11 @@ model Chapter {
   deleted_at  DateTime?
 
   // Relations
-  course   Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  parent   Chapter?  @relation("ChapterHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
-  children Chapter[] @relation("ChapterHierarchy")
+  course                  Course                  @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  parent                  CourseSection?          @relation("CourseSectionHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
+  children                CourseSection[]         @relation("CourseSectionHierarchy")
+  sectionAttachments      SectionAttachment[]
+  courseSectionProgresses CourseSectionProgress[]
 }
 
 model Resource {
@@ -76,34 +83,36 @@ model Resource {
   deleted_at DateTime?
 
   // Relations
-  owner       User         @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  contents    Content[]
-  attachments Attachment[]
+  owner              User               @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  sections           ResourceSection[]
+  courseResources    CourseResource[]
+  resourceProgresses ResourceProgress[]
 }
 
-model Content {
+model ResourceSection {
   id          String    @id @default(uuid()) @db.Uuid
   resource_id String    @db.Uuid
   parent_id   String?   @db.Uuid
   title       String
-  details     String?
+  description String?
   order       Int
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
   // Relations
-  resource Resource  @relation(fields: [resource_id], references: [id], onDelete: Cascade)
-  parent   Content?  @relation("ContentHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
-  children Content[] @relation("ContentHierarchy")
+  resource                  Resource                  @relation(fields: [resource_id], references: [id], onDelete: Cascade)
+  parent                    ResourceSection?          @relation("ResourceSectionHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
+  children                  ResourceSection[]         @relation("ResourceSectionHierarchy")
+  sectionAttachments        SectionAttachment[]
+  resourceSectionProgresses ResourceSectionProgress[]
 }
 
 model Enrollment {
-  user_id    String    @db.Uuid
-  course_id  String    @db.Uuid
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  user_id     String   @db.Uuid
+  course_id   String   @db.Uuid
+  is_starred  Boolean  @default(false)
+  enrolled_at DateTime @default(now())
 
   // Relations
   user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -112,38 +121,84 @@ model Enrollment {
   @@id([user_id, course_id])
 }
 
-// Polymorphic attachment: can attach a Resource to either a Course or a Chapter
-model Attachment {
-  id              String    @id @default(uuid()) @db.Uuid
-  resource_id     String    @db.Uuid
-  notes           String?
-  attachable_id   String    @db.Uuid
-  attachable_type String // "Course" or "Chapter"
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  deleted_at      DateTime?
+// Linking a Course to a Resource as a general reference
+model CourseResource {
+  course_id   String @db.Uuid
+  resource_id String @db.Uuid
 
   // Relations
+  course   Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
   resource Resource @relation(fields: [resource_id], references: [id], onDelete: Cascade)
 
-  @@index([attachable_type, attachable_id])
+  @@id([course_id, resource_id])
 }
 
-// Polymorphic progress: can track progress for either a Chapter or a Content
-model Progress {
-  id                String    @id @default(uuid()) @db.Uuid
-  user_id           String    @db.Uuid
-  progress          Float     @default(0.0)
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
-  deleted_at        DateTime?
-  progressable_id   String    @db.Uuid
-  progressable_type String // "Chapter" or "Content"
+// Linking a specific course section to a specific resource section
+model SectionAttachment {
+  id                  String  @id @default(uuid()) @db.Uuid
+  course_section_id   String  @db.Uuid
+  resource_section_id String  @db.Uuid
+  notes               String?
 
   // Relations
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  courseSection   CourseSection   @relation(fields: [course_section_id], references: [id], onDelete: Cascade)
+  resourceSection ResourceSection @relation(fields: [resource_section_id], references: [id], onDelete: Cascade)
+}
 
-  @@index([progressable_type, progressable_id])
+// Course progress tracking
+model CourseProgress {
+  user_id    String   @db.Uuid
+  course_id  String   @db.Uuid
+  progress   Float    @default(0.0)
+  updated_at DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, course_id])
+}
+
+// Resource progress tracking
+model ResourceProgress {
+  user_id     String   @db.Uuid
+  resource_id String   @db.Uuid
+  progress    Float    @default(0.0)
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  resource Resource @relation(fields: [resource_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, resource_id])
+}
+
+// Course section progress tracking
+model CourseSectionProgress {
+  user_id           String   @db.Uuid
+  course_section_id String   @db.Uuid
+  progress          Float    @default(0.0)
+  updated_at        DateTime @updatedAt
+
+  // Relations
+  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  courseSection CourseSection @relation(fields: [course_section_id], references: [id])
+
+  @@id([user_id, course_section_id])
+}
+
+// Resource section progress tracking
+model ResourceSectionProgress {
+  user_id             String   @db.Uuid
+  resource_section_id String   @db.Uuid
+  progress            Float    @default(0.0)
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  user            User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  resourceSection ResourceSection @relation(fields: [resource_section_id], references: [id])
+
+  @@id([user_id, resource_section_id])
 }
 
 enum ResourceType {
