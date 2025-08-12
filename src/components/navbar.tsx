@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UserRound, BookOpen, Home } from "lucide-react";
+import { UserRound, BookOpen, Home, BookText } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -17,6 +17,12 @@ const Navbar = () => {
             <Link href="/" className="flex items-center space-x-1">
               <Home className="h-4 w-4" />
               <span>Home</span>
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link href="/course" className="flex items-center space-x-1">
+              <BookText className="h-4 w-4" />
+              <span>Courses</span>
             </Link>
           </Button>
           <Button variant="ghost" asChild>
